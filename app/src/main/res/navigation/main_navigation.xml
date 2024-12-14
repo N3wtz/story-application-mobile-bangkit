@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_navigation"
+    app:startDestination="@id/listFragment">
+
+    <fragment
+        android:id="@+id/userFragment"
+        android:name="com.bangkit.storyapplicationgagas.View.UI.User.UserFragment"
+        android:label="fragment_user"
+        tools:layout="@layout/fragment_user" />
+    <fragment
+        android:id="@+id/listFragment"
+        android:name="com.bangkit.storyapplicationgagas.View.UI.List.ListFragment"
+        android:label="fragment_list"
+        tools:layout="@layout/fragment_list" />
+    <activity
+        android:id="@+id/postActivity"
+        android:name="com.bangkit.storyapplicationgagas.View.UI.AddStory.AddActivity"
+        android:label="activity_post"
+        tools:layout="@layout/activity_add" />
+    <fragment
+        android:id="@+id/mapsFragment"
+        android:name="com.bangkit.storyapplicationgagas.View.UI.Maps.MapsFragment"
+        android:label="fragment_maps"
+        tools:layout="@layout/fragment_maps" />
+</navigation>

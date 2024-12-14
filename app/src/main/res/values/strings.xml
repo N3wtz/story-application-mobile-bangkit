@@ -1,0 +1,45 @@
+<resources>
+    <string name="app_name">StoryApplicationGagas</string>
+
+    <string name="login">Masuk</string>
+    <string name="signup">Daftar</string>
+    <string name="title_welcome_page">Selamat Datang di Story App</string>
+    <string name="message_welcome_page">Bagikan Ceritamu, Rasakan Serunya!</string>
+    <string name="welcomeText">Sudah Siap memulai aplikasi?</string>
+    <string name="welcomeLogin">Masukan datamu terlebih dahulu</string>
+    <string name="post_story">Tambah Cerita</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="daftar">Lengkapi data dirimu dibawah ini</string>
+    <string name="name">Nama</string>
+    <string name="registration_successful">Registrasi Sukses</string>
+    <string name="email_is_already_taken">Email Sudah Terdaftar</string>
+    <string name="network_error">Terjadi Masalah Jaringan</string>
+    <string name="username_password_is_incorrect">Invalid Password</string>
+
+    <string name="location_permission_granted">Location permission granted</string>
+    <string name="location_permission_denied">Location permission denied</string>
+
+    <string name="no_connection">Waktu Koneksi Habis</string>
+    <string name="error">Permintaan tidak dapat dimuat</string>
+    <string name="list_story">User Story List</string>
+    <string name="no_data">Data Tidak Ditemukan</string>
+    <string name="logout_confirm">Log Out Account ?</string>
+    <string name="permission_request_granted">Permission request granted</string>
+    <string name="permission_request_denied">Permission request denied</string>
+
+    <string name="posting">Tambahkan Ceritamu</string>
+    <string name="cerita_desc">Deskripsikan Ceritamu</string>
+    <string name="upload">Kirimkan Ceritamu</string>
+    <string name="desc">Deskripsi</string>
+    <string name="masuk">Masuk</string>
+
+
+    <string name="menu_beranda">Masuk</string>
+    <string name="menu_buat">Buat</string>
+    <string name="menu_peta">Peta</string>
+    <string name="menu_profil">Profil</string>
+
+    <string name="add_location">Tambahkan Lokasimu</string>
+
+</resources>
