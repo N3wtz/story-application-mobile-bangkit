@@ -2,6 +2,9 @@ package com.bangkit.storyapplicationgagas.Data.Repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.bangkit.storyapplicationgagas.Data.Config.ApiConfig
 import com.bangkit.storyapplicationgagas.Data.Preference.UserPreference
 import com.bangkit.storyapplicationgagas.Data.Response.FileUploadResponse
@@ -15,6 +18,16 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 
 class StoryRepository private constructor(private val apiService: ApiService, private val userPreference: UserPreference,) {
+
+    fun getStoriesPaging(): Flow<PagingData<ListStoryItem>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 20,        // Ukuran halaman
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = { StoryPagingSource(apiService) }
+        ).flow
+    }
 
     fun StoryList(): LiveData<List<ListStoryItem>> = liveData {
         emit(emptyList())
