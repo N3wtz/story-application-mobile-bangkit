@@ -29,23 +29,6 @@ class StoryRepository private constructor(private val apiService: ApiService, pr
         ).flow
     }
 
-    fun StoryList(): LiveData<List<ListStoryItem>> = liveData {
-        emit(emptyList())
-        val token = userPreference.getToken()
-        val apiService = ApiConfig.getApiService(token.toString())
-        try {
-            val response = apiService.getStories()
-            val stories = response.listStory
-            if (!response.error) {
-                emit(stories)
-            } else {
-                emit(emptyList())
-            }
-        } catch (e: Exception) {
-            emit(emptyList())
-        }
-    }
-
     suspend fun detailStory(id: String): Flow<Response<Story>> = flow {
         emit(Response.Loading)
         val token = userPreference.getToken()

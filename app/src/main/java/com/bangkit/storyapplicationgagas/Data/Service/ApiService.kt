@@ -58,8 +58,8 @@ interface ApiService {
     suspend fun postStory(
         @Part file: MultipartBody.Part,
         @Part("description") description: RequestBody,
-        @Part("lat") lat: RequestBody?, // Ubah sesuai API
-        @Part("lon") lon: RequestBody?  // Ubah sesuai API
+        @Part("lat") lat: RequestBody?,
+        @Part("lon") lon: RequestBody?
     ): FileUploadResponse
 
 

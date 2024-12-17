@@ -72,7 +72,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Mengatur item menu toolbar
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.postActivity -> {

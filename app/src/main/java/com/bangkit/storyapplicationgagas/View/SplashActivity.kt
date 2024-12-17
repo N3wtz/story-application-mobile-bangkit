@@ -11,6 +11,7 @@ import com.bangkit.storyapplicationgagas.R
 import com.bangkit.storyapplicationgagas.View.UI.Landing.LandingActivity
 import com.bangkit.storyapplicationgagas.View.UI.Login.LoginActivity
 import com.bangkit.storyapplicationgagas.View.UI.MainActivity
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class SplashActivity : AppCompatActivity() {
@@ -21,17 +22,18 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        // Cek apakah pengguna sudah login
         val userPreference = UserPreference.getInstance(applicationContext.dataStore)
 
-        // Menggunakan lifecycleScope untuk mengumpulkan data dari Flow
         lifecycleScope.launch {
+            delay(SPLASH_DURATION)
+
+            // Cek apakah pengguna sudah login
             userPreference.getSession().collect { user ->
                 val intent = if (user.isLogin) {
                     // Jika sudah login, langsung ke MainActivity (ListFragment)
                     Intent(this@SplashActivity, MainActivity::class.java)
                 } else {
-                    // Jika belum login, ke LoginActivity
+                    // Jika belum login, ke LandingActivity
                     Intent(this@SplashActivity, LandingActivity::class.java)
                 }
                 startActivity(intent)
