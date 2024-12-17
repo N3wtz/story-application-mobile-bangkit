@@ -16,11 +16,23 @@ class AddViewModel(private val storyRepository: StoryRepository) : ViewModel() {
     private val _postResult = MutableLiveData<Response<FileUploadResponse>>()
     val postResult: LiveData<Response<FileUploadResponse>> = _postResult
 
-    fun postStory(imagePart: MultipartBody.Part, descriptionPart: RequestBody) {
+    fun postStory(
+        photo: MultipartBody.Part,
+        description: RequestBody,
+        lat: RequestBody?,
+        lon: RequestBody?
+    ) {
         viewModelScope.launch {
-            storyRepository.postStory(imagePart, descriptionPart).collect { result ->
-                _postResult.value = result
+            _postResult.value = Response.Loading
+            try {
+                storyRepository.postStory(photo, description, lat, lon).collect { result ->
+                    _postResult.value = result
+                }
+            } catch (e: Exception) {
+                _postResult.value = Response.Error(e.message.toString())
             }
         }
     }
+
 }
+

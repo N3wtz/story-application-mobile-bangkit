@@ -110,8 +110,23 @@
                 android:backgroundTint="@color/blue"
                 app:layout_constraintEnd_toEndOf="@id/description"
                 app:layout_constraintStart_toStartOf="@id/description"
-                app:layout_constraintTop_toBottomOf="@id/description"
+                app:layout_constraintTop_toBottomOf="@id/switch1"
                 app:shapeAppearance="?attr/shapeAppearanceSmallComponent" />
+
+            <Switch
+                android:id="@+id/switch1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/add_location"
+                android:textSize="16sp"
+                app:layout_constraintTop_toBottomOf="@id/description"
+                app:layout_constraintBottom_toTopOf="@id/btn_post"
+                app:layout_constraintStart_toStartOf="@id/description"
+                app:layout_constraintEnd_toEndOf="@id/description"
+                android:thumbTint="@drawable/switch_thumb_selector"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

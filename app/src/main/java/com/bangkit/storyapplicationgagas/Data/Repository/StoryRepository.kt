@@ -77,12 +77,17 @@ class StoryRepository private constructor(private val apiService: ApiService, pr
         }
     }
 
-    suspend fun postStory(multipartBody: MultipartBody.Part, description: RequestBody): Flow<Response<FileUploadResponse>> = flow {
+    suspend fun postStory(
+        multipartBody: MultipartBody.Part,
+        description: RequestBody,
+        lat: RequestBody?,
+        lon: RequestBody?
+    ): Flow<Response<FileUploadResponse>> = flow {
         emit(Response.Loading)
         val token = userPreference.getToken()
         val apiService = ApiConfig.getApiService(token.toString())
         try {
-            val response = apiService.postStory(multipartBody, description)
+            val response = apiService.postStory(multipartBody, description, lat, lon)
             emit(Response.Success(response))
         } catch (e: Exception) {
             emit(Response.Error(e.message ?: "An error occurred"))

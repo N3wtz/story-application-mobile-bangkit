@@ -5,7 +5,6 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -14,26 +13,32 @@ import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import com.bangkit.storyapplicationgagas.Data.Response.Response
 import com.bangkit.storyapplicationgagas.R
-import com.bangkit.storyapplicationgagas.databinding.ActivityAddBinding
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import com.bangkit.storyapplicationgagas.Utils.reduceFileImage
 import com.bangkit.storyapplicationgagas.Utils.uriToFile
 import com.bangkit.storyapplicationgagas.View.UI.AddStory.CameraActivity.Companion.CAMERAX_RESULT
 import com.bangkit.storyapplicationgagas.View.UI.MainActivity
 import com.bangkit.storyapplicationgagas.View.ViewModelFactory
+import com.bangkit.storyapplicationgagas.databinding.ActivityAddBinding
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 
 class AddActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddBinding
     private val viewModel by viewModels<AddViewModel> { ViewModelFactory.getInstance(this) }
     private var currentImageUri: Uri? = null
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var locationString: String? = null
 
     private val requestPermissLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
         val message = if (isGranted) getString(R.string.permission_request_granted) else getString(R.string.permission_request_denied)
@@ -49,6 +54,7 @@ class AddActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setupToolbar()
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         if (!allPermissionsGranted()) {
             requestPermissLauncher.launch(REQUIRED_PERMISSION)
@@ -58,6 +64,14 @@ class AddActivity : AppCompatActivity() {
 
         binding.addImage.setOnClickListener { selectImage() }
         binding.btnPost.setOnClickListener { uploadImage() }
+
+        binding.switch1.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                fetchLocation()
+            } else {
+                locationString = null // Reset jika switch dimatikan
+            }
+        }
     }
 
     private fun setupToolbar() {
@@ -106,6 +120,25 @@ class AddActivity : AppCompatActivity() {
         Toast.makeText(this, "Upload Gagal", Toast.LENGTH_SHORT).show()
     }
 
+    private fun fetchLocation() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            == PackageManager.PERMISSION_GRANTED
+        ) {
+            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                if (location != null) {
+                    locationString = "${location.latitude},${location.longitude}"
+                    Toast.makeText(this, "Location: $locationString", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Failed to get location", Toast.LENGTH_SHORT).show()
+                }
+            }
+        } else {
+            requestPermissLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+    }
+
+
+
     private fun uploadImage() {
         currentImageUri?.let { uri ->
             val imageFile = uriToFile(uri, this).reduceFileImage()
@@ -115,9 +148,19 @@ class AddActivity : AppCompatActivity() {
             val requestImageFile = imageFile.asRequestBody("image/jpeg".toMediaType())
             val multipartBody = MultipartBody.Part.createFormData("photo", imageFile.name, requestImageFile)
 
-            viewModel.postStory(multipartBody, requestBody)
+            // Cek apakah lokasi tersedia dan parsing menjadi lat & lon
+            val latPart: RequestBody? = locationString?.split(",")?.getOrNull(0)?.toRequestBody("text/plain".toMediaType())
+            val lonPart: RequestBody? = locationString?.split(",")?.getOrNull(1)?.toRequestBody("text/plain".toMediaType())
+
+            // Kirimkan ke ViewModel
+            viewModel.postStory(multipartBody, requestBody, latPart, lonPart)
+        } ?: run {
+            Toast.makeText(this, "Please select an image", Toast.LENGTH_SHORT).show()
         }
     }
+
+
+
 
     private fun selectImage() {
         val optionActions = arrayOf<CharSequence>("Take Foto", "Your Galery", "Cancel")
