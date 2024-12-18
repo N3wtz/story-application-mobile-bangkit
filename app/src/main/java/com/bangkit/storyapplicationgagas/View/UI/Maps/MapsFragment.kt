@@ -21,12 +21,14 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.MapStyleOptions
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class MapsFragment : Fragment() {
 
     private lateinit var mMap: GoogleMap
     private lateinit var mapViewModel: MapViewModel
-    private lateinit var mapViewModelFactory: ViewModelFactory
 
     private val callback = OnMapReadyCallback { googleMap ->
         mMap = googleMap
@@ -38,30 +40,22 @@ class MapsFragment : Fragment() {
         getMyLocation()
 
         mapViewModel.stories.observe(viewLifecycleOwner) { data ->
-            val boundsBuilder = LatLngBounds.Builder()  // Membuat builder untuk LatLngBounds
+            val boundsBuilder = LatLngBounds.Builder()
 
             data.forEach { story ->
-                val latLng = LatLng(
-                    story.lat ?: 0.0,  // Koordinat lat jika tidak null, default 0.0
-                    story.lon ?: 0.0   // Koordinat lon jika tidak null, default 0.0
-                )
+                val latLng = LatLng(story.lat ?: 0.0, story.lon ?: 0.0)
                 mMap.addMarker(
                     MarkerOptions()
                         .position(latLng)
                         .title(story.name)
                         .snippet(story.description)
                 )
-                boundsBuilder.include(latLng)  // Tambahkan setiap LatLng ke builder
+                boundsBuilder.include(latLng)
             }
 
-            // Membuat LatLngBounds dari builder
             val bounds = boundsBuilder.build()
-
-            // Menentukan padding agar peta tidak terlalu terjepit
             val padding = 100
             val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding)
-
-            // Memindahkan kamera untuk mencakup semua marker
             mMap.moveCamera(cameraUpdate)
         }
 
@@ -78,15 +72,22 @@ class MapsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mapViewModelFactory = ViewModelFactory.getInstance(requireContext())
-        mapViewModel = ViewModelProvider(this, mapViewModelFactory).get(MapViewModel::class.java)
+        initializeViewModel()
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
     }
 
+    private fun initializeViewModel() {
+        // Ensure synchronous execution
+        val factory = runBlocking { ViewModelFactory.getInstance(requireContext()) }
+        mapViewModel = ViewModelProvider(this, factory).get(MapViewModel::class.java)
+    }
+
     private fun setMapStyle() {
         try {
-            val success = mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.map_style))
+            val success = mMap.setMapStyle(
+                MapStyleOptions.loadRawResourceStyle(requireContext(), R.raw.map_style)
+            )
             if (!success) {
                 Log.e(TAG, "Style parsing failed.")
             }

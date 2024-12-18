@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 
 class StoryViewModel (private val repository : StoryRepository) : ViewModel () {
 
-    fun getStories(): LiveData<PagingData<ListStoryItem>> {
+    suspend fun getStories(): LiveData<PagingData<ListStoryItem>> {
         return repository.getStoriesPaging().cachedIn(viewModelScope).asLiveData()
     }
 
