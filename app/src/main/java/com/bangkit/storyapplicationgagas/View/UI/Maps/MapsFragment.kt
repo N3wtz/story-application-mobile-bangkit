@@ -23,7 +23,6 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.MapStyleOptions
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 class MapsFragment : Fragment() {
 
@@ -78,9 +77,10 @@ class MapsFragment : Fragment() {
     }
 
     private fun initializeViewModel() {
-        // Ensure synchronous execution
-        val factory = runBlocking { ViewModelFactory.getInstance(requireContext()) }
-        mapViewModel = ViewModelProvider(this, factory).get(MapViewModel::class.java)
+        lifecycleScope.launch {
+            val factory = ViewModelFactory.getInstance(requireContext())
+            mapViewModel = ViewModelProvider(this@MapsFragment, factory).get(MapViewModel::class.java)
+        }
     }
 
     private fun setMapStyle() {

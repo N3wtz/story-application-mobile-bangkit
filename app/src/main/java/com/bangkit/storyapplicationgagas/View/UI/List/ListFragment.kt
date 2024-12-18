@@ -33,16 +33,13 @@ class ListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Setup RecyclerView
         binding.rvList.layoutManager = LinearLayoutManager(requireContext())
         binding.rvList.adapter = adapter
 
-        // Setup SwipeRefreshLayout
         binding.swipeRefreshLayout.setOnRefreshListener {
             loadStories()
         }
 
-        // Set item click callback
         adapter.setOnItemClickCallback(object : StoryPagingAdapter.OnItemClickCallback {
             override fun onItemClicked(data: ListStoryItem) {
                 // Pindah ke DetailStoryActivity
@@ -56,7 +53,11 @@ class ListFragment : Fragment() {
             }
         })
 
-        // Load stories
+        loadStories()
+    }
+
+    override fun onStart() {
+        super.onStart()
         loadStories()
     }
 

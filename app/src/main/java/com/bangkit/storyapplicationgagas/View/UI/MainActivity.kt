@@ -10,7 +10,6 @@ import androidx.navigation.ui.setupWithNavController
 import com.bangkit.storyapplicationgagas.R
 import com.bangkit.storyapplicationgagas.View.UI.AddStory.AddActivity
 import com.bangkit.storyapplicationgagas.View.UI.Landing.LandingActivity
-import com.bangkit.storyapplicationgagas.View.UI.Login.LoginActivity
 import com.bangkit.storyapplicationgagas.View.ViewModelFactory
 import com.bangkit.storyapplicationgagas.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
