@@ -10,17 +10,17 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
 object Injection {
-    fun provideRepository(context: Context): RepositoryUser {
+    suspend fun provideRepository(context: Context): RepositoryUser {
         val pref = UserPreference.getInstance(context.dataStore)
-        val user = runBlocking { pref.getSession().first() }
+        val user = pref.getSession().first()
         val apiService = ApiConfig.getApiService(user.token)
         val userPreference = UserPreference.getInstance(context.dataStore)
         return RepositoryUser.getInstance(apiService, userPreference)
     }
 
-    fun storyRepository(context: Context): StoryRepository {
+    suspend fun storyRepository(context: Context): StoryRepository {
         val pref = UserPreference.getInstance(context.dataStore)
-        val user = runBlocking { pref.getSession().first() }
+        val user = pref.getSession().first()
         val apiService = ApiConfig.getApiService(user.token)
         return StoryRepository.getInstance(apiService, pref)
     }

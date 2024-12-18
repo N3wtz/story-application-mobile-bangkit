@@ -19,13 +19,21 @@ import okhttp3.RequestBody
 
 class StoryRepository private constructor(private val apiService: ApiService, private val userPreference: UserPreference,) {
 
-    fun getStoriesPaging(): Flow<PagingData<ListStoryItem>> {
+    suspend fun getStoriesPaging(): Flow<PagingData<ListStoryItem>> {
+        val token = userPreference.getToken()
+
+        if (token.isNullOrEmpty()) {
+            throw Exception("Token is empty or null")
+        }
+
+        val apiServiceWithToken = ApiConfig.getApiService(token)
+
         return Pager(
             config = PagingConfig(
-                pageSize = 20,        // Ukuran halaman
+                pageSize = 20, // Ukuran halaman
                 enablePlaceholders = false
             ),
-            pagingSourceFactory = { StoryPagingSource(apiService) }
+            pagingSourceFactory = { StoryPagingSource(apiServiceWithToken) }
         ).flow
     }
 
@@ -79,20 +87,14 @@ class StoryRepository private constructor(private val apiService: ApiService, pr
 
 
     suspend fun getStoriesWithLocation(): List<Story> {
-        // Dapatkan token dari UserPreference
         val token = userPreference.getToken()
+        val validToken = token ?: ""
 
-        // Pastikan token tidak null. Jika null, gunakan string kosong atau token default lainnya.
-        val validToken = token ?: ""  // Token kosong jika null
-
-        // Pastikan validToken tidak null saat dipassing ke ApiService
         val apiService = ApiConfig.getApiService(validToken)
 
         try {
-            // Memanggil API untuk mendapatkan stories
             val response = apiService.getStoriesWithLocation(location = 1)  // Menambahkan lokasi = 1
             return response.listStory.map { listStoryItem ->
-                // Map ListStoryItem ke Story jika diperlukan
                 Story(
                     id = listStoryItem.id,
                     name = listStoryItem.name,
@@ -104,7 +106,7 @@ class StoryRepository private constructor(private val apiService: ApiService, pr
                 )
             }
         } catch (e: Exception) {
-            return emptyList()  // Menangani error dengan mengembalikan list kosong
+            return emptyList()
         }
     }
 
